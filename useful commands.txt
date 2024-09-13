@@ -1,0 +1,5 @@
+# start application
+uvicorn main:app --reload
+
+# get requirments.txt from venv
+pip list > requirments.txt
