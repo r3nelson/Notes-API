@@ -3,3 +3,5 @@ uvicorn main:app --reload
 
 # get requirments.txt from venv
 pip list > requirments.txt
+
+requirements.txt: This file should list all your Python dependencies, including FastAPI and Uvicorn. You can generate it with pip freeze > requirements.txt.
