@@ -15,11 +15,11 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    image: notes-api
-    container_name: notes-api
+    image: notes-api-backend
+    container_name: backend
     environment:
       # DATABASE_URL:postgres://youruser:yourpassword@postgres:5432/yourdatabase
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/notes-db
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@notes-db:5432/notes-db
     volumes:
       # - /path/to/your/development/folder:/app- /path/to/your/development/folder:/app
       - ${DEVELOPMENT_FOLDER}:/app
@@ -27,5 +27,10 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
 volumes:
   postgres_data:
