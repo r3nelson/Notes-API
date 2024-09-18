@@ -5,3 +5,12 @@ uvicorn main:app --reload
 pip list > requirments.txt
 
 requirements.txt: This file should list all your Python dependencies, including FastAPI and Uvicorn. You can generate it with pip freeze > requirements.txt.
+
+#(initalize alembic.ini and directory named alembic)
+alembic init alembic
+
+# commit new alembic revision (use if you make change to models.py)
+alembic revision --autogenerate -m "removed materials from schema and models"
+
+# upgrade alembic version to latest (works like git)
+alembic upgrade head
