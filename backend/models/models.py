@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, CheckConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import TypeDecorator, Text
 from db.database import Base
@@ -33,6 +33,15 @@ class FlashCard(Base):
 
     # Define relationship back to Subject
     subject = relationship("Subject", back_populates="flashcards")
+
+    __table_args__ = (
+        CheckConstraint('confidence >= 1.0', name='check_confidence_min'),
+        CheckConstraint('confidence <= 10.0', name='check_confidence_max'),
+    )
+
+    def __init__(self, question:str, answer: str):
+        self.question = self.question.lower() 
+        self.answer = self.answer.lower()
     
 class Subject(Base):
     __tablename__ = "subjects"
