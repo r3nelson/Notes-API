@@ -30,7 +30,6 @@ def get_flashcards(db: Session = Depends(get_db)):
 
     if not flashcards:
         return []
-    
     return flashcards
 
 # GET a flashcard by id
@@ -70,7 +69,6 @@ def get_subjects(db: Session = Depends(get_db)):
 
     if not subjects:
         return []
-    
     return subjects
 
 # GET a subject by id
@@ -83,16 +81,12 @@ def get_subject(id: int, db: Session = Depends(get_db)):
     
     return subject
 
-@app.get("/subject/id/{name}")
-def get_subject_id(name: str, db: Session = Depends(get_db)):
-    # Query the database to find the subject by name
-    subject = db.query(Subject).filter(Subject.name == name).first()
+@app.get("/subject/id/{subject_name}")
+def get_subject_id(subject_name: str, db: Session = Depends(get_db)):
+    subject = db.query(Subject).filter(Subject.name == subject_name).first()
 
-    # Raise an exception if the subject is not found
     if not subject:
-        raise HTTPException(status_code=404, detail="Subject not found")
-
-    # Return the subject (with id and name)
+        raise HTTPException(status_code=404, detail=f"Subject '{subject_name}' not found")
     return {"subject.id" : subject.id}
 
 # POST a flashcard by id
@@ -154,12 +148,22 @@ def create_subject(subject: SubjectCreate,
     if continuations:
         new_subject.continuations = continuations
 
-    # validation check
     if not name:  raise HTTPException(status_code=400, detail="Name is required and cannot be empty")
     if not continuations: raise HTTPException(status_code=400, detail="continuations is required and cannot be empty")
 
     db.add(new_subject)
     db.commit()
     db.refresh(new_subject)
-
     return new_subject
+
+@app.get("/flashcards/{subject_name}")
+def get_flashcards_by_subject(subject_name: str, db: Session = Depends(get_db)):
+    subject_id = get_subject_id(subject_name, db=db)["subject.id"]
+    flashcards = db.query(FlashCard).filter(FlashCard.subject_id == subject_id).all()
+
+    if not flashcards:
+        raise HTTPException(status_code=404, detail=f"No flashcards found for {subject_name}")
+    return flashcards
+
+
+
