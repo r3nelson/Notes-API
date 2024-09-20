@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import TypeDecorator, Text
 from db.database import Base
+from typing import List, Optional
 import json
 
 class JSONType(TypeDecorator):
@@ -44,9 +45,9 @@ class Subject(Base):
     # Define the relationship to flashcards
     flashcards = relationship("FlashCard", back_populates="subject", cascade="all, delete-orphan")
 
-
-   
-
+    def __init__ (self, name:str, continuations: Optional[List[str]] = None):
+        self.name = name.lower
+        self.continuations = [c.lower() for c in continuations] if continuations else None
 
 # class Materials(Base):
 #     __tablename__ = "materials"
