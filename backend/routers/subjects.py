@@ -58,6 +58,25 @@ def create_subject(
     db.refresh(new_subject)
     return new_subject
 
+# Patch a subject by id
+@router.patch("/subject/{subject_id}", response_model=SubjectCreate)
+def update_subject(subject_id: int, name: str = None, continuations: Optional[List[str]] = None, db: Session = Depends(get_db)):
+
+    subject = db.query(Subject).filter(Subject.id == subject_id).first()
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    if name:
+        subject.name = name.lower()
+    if continuations:
+        subject.continuations = [x.lower() for x in continuations] if continuations else None
+
+    db.commit()
+    db.refresh(subject)
+    return subject
+
+
 
 # Delete a subject by id #will delete all flashcards for this subject
 @router.delete("/subject/{subject_id}")
