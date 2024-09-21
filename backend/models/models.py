@@ -45,6 +45,9 @@ class FlashCard(Base):
         self.answer = answer.lower()
         self.subject_id = subject_id
     
+    def __repr__(self):
+        return f"FlashCard(id={self.id}, question={self.question}, confidence={self.confidence}, answer={self.answer}, subject_id={self.subject_id})"
+    
 class Subject(Base):
     __tablename__ = "subjects"
 
@@ -59,6 +62,9 @@ class Subject(Base):
     def __init__ (self, name:str, continuations: Optional[List[str]] = None):
         self.name = name.lower
         self.continuations = [c.lower() for c in continuations] if continuations else None
+    
+    def __repr__(self):
+        return f"Subject(id={self.id}, name={self.name}, continuations={self.continuations})"
 
 # class Materials(Base):
 #     __tablename__ = "materials"
