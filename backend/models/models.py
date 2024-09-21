@@ -39,9 +39,11 @@ class FlashCard(Base):
         CheckConstraint('confidence <= 10.0', name='check_confidence_max'),
     )
 
-    def __init__(self, question:str, answer: str):
-        self.question = self.question.lower() 
-        self.answer = self.answer.lower()
+    def __init__(self, question:str, confidence: float, answer: str, subject_id: int):
+        self.question = question.lower() 
+        self.confidence = confidence
+        self.answer = answer.lower()
+        self.subject_id = subject_id
     
 class Subject(Base):
     __tablename__ = "subjects"
