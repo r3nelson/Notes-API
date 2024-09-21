@@ -4,9 +4,21 @@ from sqlalchemy.orm import Session
 from models.models import FlashCard
 from typing import List, Optional
 from db.database import get_db
-from .subjects import get_subject_id
+from .subjects import get_subject_id, get_subject
 
 router = APIRouter()
+
+def question_validator(question):
+    if not question:  raise HTTPException(status_code=400, detail="Question is required and cannot be empty")
+
+def confidence_validator(confidence: float):
+    if not confidence: raise HTTPException(status_code=400, detail="Confidence is required and cannot be empty")
+        
+    if confidence < 1.0 or confidence > 10.0:
+        raise HTTPException(status_code=400, detail="Confidence must be between 1.0 and 10.0.")
+
+def answer_validator(answer):
+    if not answer: raise HTTPException(status_code=400, detail="Answer is required and cannot be empty")
 
 # GET all flashcards
 @router.get("/flashcards/", response_model=list[FlashCardResponse])
@@ -46,21 +58,21 @@ def create_flashcard(
                     subject_name: str = None,
                     db: Session = Depends(get_db)):
     
-    if confidence < 1.0 or confidence > 10.0:
-        raise HTTPException(status_code=400, detail="Confidence must be between 1.0 and 10.0.")
+    
     
     if not subject_id and not subject_name: raise HTTPException(status_code=400, detail="Subject_id or Subject_name is required and both cannot be empty")
-
-    if not subject_id and subject_name:
+    elif subject_id: get_subject(subject_id,db=db).id
+    elif subject_name:
         subject_id  = get_subject_id(subject_name, db=db)["subject.id"] # returns {"subject.id": number}
 
-    if not question:  raise HTTPException(status_code=400, detail="Question is required and cannot be empty")
-    if not confidence: raise HTTPException(status_code=400, detail="Confidence is required and cannot be empty")
-    if not answer: raise HTTPException(status_code=400, detail="Answer is required and cannot be empty")
+    question_validator(question)
+    confidence_validator(confidence)
+    answer_validator(answer)
+    
 
     new_flashcard = FlashCard(
-        question=question,
-        answer=answer,
+        question=question.lower(),
+        answer=answer.lower(),
         confidence=confidence,
         subject_id=subject_id
     )
@@ -81,14 +93,26 @@ def update_flashcard(flashcard_id: int, question: str = None, confidence: float 
         raise HTTPException(status_code=404, detail="Flashcard not found")
 
     if question:
-        flashcard.question = question
+        flashcard.question = question.lower()
     if confidence:
         flashcard.confidence = confidence
     if answer:
-        flashcard.answer = answer
+        flashcard.answer = answer.lower()
 
     db.commit()
     db.refresh(flashcard)
     return flashcard
 
 
+# Delete a flashcard by id
+@router.delete("/flashcard/{flashcard_id}")
+def get_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
+    flashcard = db.query(FlashCard).filter(FlashCard.id == flashcard_id).first()
+
+    if not flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    
+    db.delete(flashcard)
+    db.commit()
+    
+    return {"FlashCard successfully deleted": f"{repr(flashcard)}"}
