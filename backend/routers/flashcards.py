@@ -8,17 +8,27 @@ from .subjects import get_subject_id, get_subject
 
 router = APIRouter()
 
-def question_validator(question):
+def subject_id_validator (db: Session, subject_id: int = None, subject_name: str = None):
+    if not subject_id and not subject_name: raise HTTPException(status_code=400, detail="Subject_id or Subject_name is required and both cannot be empty")
+    elif subject_id: return get_subject(db=db, subject_id=subject_id).id
+    elif subject_name:
+        return get_subject_id(db=db, subject_name= subject_name)["subject.id"] 
+
+def question_validator(question: str):
     if not question:  raise HTTPException(status_code=400, detail="Question is required and cannot be empty")
+    return question.lower()
 
 def confidence_validator(confidence: float):
     if not confidence: raise HTTPException(status_code=400, detail="Confidence is required and cannot be empty")
         
     if confidence < 1.0 or confidence > 10.0:
         raise HTTPException(status_code=400, detail="Confidence must be between 1.0 and 10.0.")
+    
+    return round(confidence * 2) / 2 # round values to .5 (e.g. 7.0, 7.5, 8.0, 8.5, etc.)
 
-def answer_validator(answer):
+def answer_validator(answer: str):
     if not answer: raise HTTPException(status_code=400, detail="Answer is required and cannot be empty")
+    return answer.lower()
 
 # GET all flashcards
 @router.get("/flashcards/", response_model=list[FlashCardResponse])
@@ -41,7 +51,7 @@ def get_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
 
 @router.get("/flashcards/{subject_name}")
 def get_flashcards_by_subject(subject_name: str, db: Session = Depends(get_db)):
-    subject_id = get_subject_id(subject_name, db=db)["subject.id"]
+    subject_id = subject_id_validator(db=db, subject_name=subject_name)
     flashcards = db.query(FlashCard).filter(FlashCard.subject_id == subject_id).all()
 
     if not flashcards:
@@ -58,21 +68,14 @@ def create_flashcard(
                     subject_name: str = None,
                     db: Session = Depends(get_db)):
     
+    subject_id = subject_validator(db=db,subject_id=subject_id, subject_name=subject_name)
+    question = question_validator(question)
+    confidence = confidence_validator(confidence)
+    answer = answer_validator(answer)
     
-    
-    if not subject_id and not subject_name: raise HTTPException(status_code=400, detail="Subject_id or Subject_name is required and both cannot be empty")
-    elif subject_id: get_subject(subject_id,db=db).id
-    elif subject_name:
-        subject_id  = get_subject_id(subject_name, db=db)["subject.id"] # returns {"subject.id": number}
-
-    question_validator(question)
-    confidence_validator(confidence)
-    answer_validator(answer)
-    
-
     new_flashcard = FlashCard(
-        question=question.lower(),
-        answer=answer.lower(),
+        question=question,
+        answer=answer,
         confidence=confidence,
         subject_id=subject_id
     )
