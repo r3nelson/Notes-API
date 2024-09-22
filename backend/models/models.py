@@ -54,29 +54,12 @@ class Subject(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     continuations = Column(JSONType, nullable=True)
-    # study_material = relationship("Materials", back_populates="subject")  # Updated to reflect the relationship
-    
-    # Define the relationship to flashcards
     flashcards = relationship("FlashCard", back_populates="subject", cascade="all, delete-orphan")
 
     def __init__ (self, name:str, continuations: Optional[List[str]] = None):
-        self.name = name.lower
-        self.continuations = [c.lower() for c in continuations] if continuations else None
+        self.name = name.lower()
+        self.continuations = [c.lower() for c in continuations] if continuations else []
     
     def __repr__(self):
         return f"Subject(id={self.id}, name={self.name}, continuations={self.continuations})"
 
-# class Materials(Base):
-#     __tablename__ = "materials"
-
-#     id = Column(Integer, primary_key=True, index=True)
-#     type = Column(String, nullable=False)  # book, online course, etc.
-#     author = Column(String, nullable=True)
-#     book_name = Column(String, nullable=True)
-#     course = Column(String, nullable=True)
-#     course_name = Column(String, nullable=True)
-#     platform = Column(String, nullable=True)  # udemy, INE, etc.
-#     subject_id = Column(Integer, ForeignKey('subjects.id'))  # Foreign key reference to Subject
-
-#     # Define the relationship to Subject
-#     subject = relationship("Subject", back_populates="study_material")
