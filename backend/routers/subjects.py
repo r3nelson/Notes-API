@@ -39,7 +39,7 @@ def get_subject_id(subject_name: str, db: Session = Depends(get_db)):
 @router.post("/subjects/", response_model=SubjectResponse)
 def create_subject(
                 subject_name: str,
-                continuations: Optional[List[str]] = None,
+                continuations: Optional[List[str]] = [],
                 db:Session = Depends(get_db)):
 
     if not subject_name:  raise HTTPException(status_code=400, detail="subject_name is required and cannot be empty")
@@ -47,10 +47,10 @@ def create_subject(
     existing_subject = db.query(Subject).filter(Subject.name == subject_name).first()
     if existing_subject:
         raise HTTPException(status_code=400, detail=f"Subject '{subject_name}' already exists.")
-    
+
     new_subject = Subject(
-        subject_name=subject_name.lower(),
-        continuations= [x.lower() for x in continuations] if continuations else None
+        name=subject_name.lower(),
+        continuations= [x.lower() for x in continuations] if continuations else []
     )
 
     db.add(new_subject)
@@ -60,7 +60,7 @@ def create_subject(
 
 # Patch a subject by id
 @router.patch("/subject/{subject_id}", response_model=SubjectCreate)
-def update_subject(subject_id: int, name: str = None, continuations: Optional[List[str]] = None, db: Session = Depends(get_db)):
+def update_subject(subject_id: int, name: str = None, continuations: Optional[List[str]] = [], db: Session = Depends(get_db)):
 
     subject = db.query(Subject).filter(Subject.id == subject_id).first()
 
@@ -70,13 +70,11 @@ def update_subject(subject_id: int, name: str = None, continuations: Optional[Li
     if name:
         subject.name = name.lower()
     if continuations:
-        subject.continuations = [x.lower() for x in continuations] if continuations else None
+        subject.continuations = [x.lower() for x in continuations] if continuations else []
 
     db.commit()
     db.refresh(subject)
     return subject
-
-
 
 # Delete a subject by id #will delete all flashcards for this subject
 @router.delete("/subject/{subject_id}")
