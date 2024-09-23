@@ -1,33 +1,25 @@
 // Displays a list of flashcards
-import React, { useEffect, useState } from "react";
-import { fetchFlashcards } from "../../services/flashcardService";
-import { FlashCard } from "../../types/types";
+import FlashcardItem from "./FlashCardItem";
+import useFlashcards from "../../hooks/useFlashcards";
 
 const FlashcardsDisplay: React.FC = () => {
-  const [flashcards, setFlashcards] = useState<FlashCard[]>([]);
+  const { flashcards, error } = useFlashcards();
 
-  useEffect(() => {
-    const getFlashcards = async () => {
-      try {
-        const flashcardData = await fetchFlashcards();
-        setFlashcards(flashcardData);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getFlashcards();
-  }, []);
   return (
     <div>
       <h1>Flashcards</h1>
-      <ul>
-        {flashcards.map((flashcard) => (
-          <li key={flashcard.id}>
-            {flashcard.question} - {flashcard.answer} - {flashcard.confidence} -{" "}
-            {flashcard.subject_id}
-          </li>
-        ))}
-      </ul>
+      {error && <p>{error}</p>}
+      {flashcards.length > 0 ? (
+        <ul>
+          {flashcards.map((flashcard) => (
+            <li key={flashcard.id}>
+              <FlashcardItem flashcard={flashcard} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p> No flashcards available</p>
+      )}
     </div>
   );
 };

@@ -1,9 +1,7 @@
 // Displays a single flashcard
 import { FlashCard } from "../../types/types";
 
-export const FlashcardItem: React.FC<{ flashcard: FlashCard }> = ({
-  flashcard,
-}) => {
+const FlashcardItem: React.FC<{ flashcard: FlashCard }> = ({ flashcard }) => {
   return (
     <div
       style={{
@@ -27,3 +25,5 @@ export const FlashcardItem: React.FC<{ flashcard: FlashCard }> = ({
     </div>
   );
 };
+
+export default FlashcardItem;
