@@ -1,12 +1,18 @@
-import FlashcardsDisplay from "./components/Flashcards/FlashcardList";
-import SubjectsDisplay from "./components/Subjects/SubjectList";
-function App() {
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import FlashcardsPage from "./pages/FlashcardsPage";
+import SubjectsPage from "./pages/SubjectsPage";
+
+const App: React.FC = () => {
   return (
-    <div>
-      <SubjectsDisplay />
-      <FlashcardsDisplay />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/flashcards" element={<FlashcardsPage />} />
+        <Route path="/subjects" element={<SubjectsPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
