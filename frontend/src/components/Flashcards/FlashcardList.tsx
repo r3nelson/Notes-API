@@ -1,27 +1,20 @@
-// Displays a list of flashcards
 import FlashcardItem from "./FlashcardItem";
-import useFlashcards from "../../hooks/useFlashcards";
+import { FlashCard } from "../../types/types";
 
-const FlashcardsDisplay: React.FC = () => {
-  const { flashcards, error } = useFlashcards();
+interface FlascardListProps {
+  flashcards: FlashCard[];
+}
 
+const FlashcardList: React.FC<FlascardListProps> = ({ flashcards }) => {
   return (
-    <div>
-      <h1>Flashcards</h1>
-      {error && <p>{error}</p>}
-      {flashcards.length > 0 ? (
-        <ul>
-          {flashcards.map((flashcard) => (
-            <li key={flashcard.id}>
-              <FlashcardItem flashcard={flashcard} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p> No flashcards available</p>
-      )}
-    </div>
+    <ul>
+      {flashcards.map((flashcard) => (
+        <li key={flashcard.id}>
+          <FlashcardItem flashcard={flashcard} />
+        </li>
+      ))}
+    </ul>
   );
 };
 
-export default FlashcardsDisplay;
+export default FlashcardList;

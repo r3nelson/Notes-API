@@ -1,27 +1,21 @@
-// Displays a list of subjects
+import React from "react";
 import SubjectItem from "./SubjectItem";
-import useSubjects from "../../hooks/useSubjects";
+import { Subject } from "../../types/types"; // Adjust the import based on your types
 
-const SubjectsDisplay: React.FC = () => {
-  const { subjects, error } = useSubjects();
+interface SubjectListProps {
+  subjects: Subject[];
+}
 
+const SubjectList: React.FC<SubjectListProps> = ({ subjects }) => {
   return (
-    <div>
-      <h1>Subjects</h1>
-      {error && <p>{error}</p>}
-      {subjects.length > 0 ? (
-        <ul>
-          {subjects.map((subject) => (
-            <li key={subject.id}>
-              <SubjectItem subject={subject} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p> No subjects available</p>
-      )}
-    </div>
+    <ul>
+      {subjects.map((subject) => (
+        <li key={subject.id}>
+          <SubjectItem subject={subject} />
+        </li>
+      ))}
+    </ul>
   );
 };
 
-export default SubjectsDisplay;
+export default SubjectList;
