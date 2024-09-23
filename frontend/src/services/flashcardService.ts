@@ -5,7 +5,9 @@ const API_URL = import.meta.env.VITE_API_URL; // ask about this line
 
 // Fetch all Flashcards
 export const fetchFlashcards = async (): Promise<FlashCard[]> => {
+  console.log(`API_URL: ${API_URL}`);
   const response = await fetch(`${API_URL}/flashcards`);
+  //   const response = await fetch(`http://localhost:8000/api/flashcards`);
 
   if (!response.ok) {
     throw new Error(`Error fetching flashcards: ${response.statusText}`);
