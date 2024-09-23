@@ -12,7 +12,7 @@ def subject_id_validator (db: Session, subject_id: int = None, subject_name: str
     if not subject_id and not subject_name: raise HTTPException(status_code=400, detail="Subject_id or Subject_name is required and both cannot be empty")
     elif subject_id: return get_subject(db=db, subject_id=subject_id).id
     elif subject_name:
-        return get_subject_id(db=db, subject_name= subject_name)["subject.id"] 
+        return get_subject_id(db=db, subject_name= subject_name.lower())["subject.id"] 
 
 def question_validator(question: str):
     if not question:  raise HTTPException(status_code=400, detail="Question is required and cannot be empty")
@@ -68,7 +68,7 @@ def create_flashcard(
                     subject_name: str = None,
                     db: Session = Depends(get_db)):
     
-    subject_id = subject_validator(db=db,subject_id=subject_id, subject_name=subject_name)
+    subject_id = subject_id_validator(db=db,subject_id=subject_id, subject_name=subject_name)
     question = question_validator(question)
     confidence = confidence_validator(confidence)
     answer = answer_validator(answer)
