@@ -1,5 +1,5 @@
 // Displays a list of flashcards
-import FlashcardItem from "./FlashCardItem";
+import FlashcardItem from "./FlashcardItem";
 import useFlashcards from "../../hooks/useFlashcards";
 
 const FlashcardsDisplay: React.FC = () => {
