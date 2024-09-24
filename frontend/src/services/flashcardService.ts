@@ -5,9 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL; // ask about this line
 
 // Fetch all Flashcards
 export const fetchFlashcards = async (): Promise<FlashCard[]> => {
-  console.log(`API_URL: ${API_URL}`);
   const response = await fetch(`${API_URL}/flashcards`);
-  //   const response = await fetch(`http://localhost:8000/api/flashcards`);
 
   if (!response.ok) {
     throw new Error(`Error fetching flashcards: ${response.statusText}`);
@@ -30,3 +28,23 @@ export const fetchFlashcards = async (): Promise<FlashCard[]> => {
 //   const data: FlashCard = await response.json();
 //   return data;
 // };
+
+// Create a Flashcard
+export const createFlashcard = async (
+  flashcard: Omit<FlashCard, "id">
+): Promise<void> => {
+  const response = await fetch(`${API_URL}/flashcards`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(flashcard),
+  });
+
+  if (!response.ok) {
+    const errorDetails = await response.json(); // Try to parse the error details
+    throw new Error(
+      `Error fetching subjects: ${response.statusText}. Details: ${errorDetails.detail}`
+    );
+  }
+};

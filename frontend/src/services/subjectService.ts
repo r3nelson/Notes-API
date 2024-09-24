@@ -12,3 +12,23 @@ export const fetchSubjects = async (): Promise<Subject[]> => {
   const data: Subject[] = await response.json();
   return data;
 };
+
+// Create a Subject
+export const createSubject = async (
+  subject: Omit<Subject, "id">
+): Promise<void> => {
+  const response = await fetch(`${API_URL}/subjects`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subject),
+  });
+
+  if (!response.ok) {
+    const errorDetails = await response.json(); // Try to parse the error details
+    throw new Error(
+      `Error fetching subjects: ${response.statusText}. Details: ${errorDetails.detail}`
+    );
+  }
+};
