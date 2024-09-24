@@ -61,12 +61,19 @@ def get_flashcards_by_subject(subject_name: str, db: Session = Depends(get_db)):
 # POST a flashcard by id
 @router.post("/flashcards/", response_model=FlashCardResponse)
 def create_flashcard(
-                    question: str,
-                    answer: str,
+                    flashcard: FlashCardCreate,
+                    question: str = None,
+                    answer: str = None,
                     confidence: float = 1.0,
                     subject_id: int = None,
                     subject_name: str = None,
                     db: Session = Depends(get_db)):
+    
+    if not question and flashcard.question: question = flashcard.question
+    if not answer and flashcard.answer: answer = flashcard.answer
+    if not confidence and flashcard.confidence: confidence = flashcard.confidence
+    if not subject_id and flashcard.subject_id: subject_id = flashcard.subject_id
+    if not subject_name and flashcard.subject_name: subject_name = flashcard.subject_name
     
     subject_id = subject_id_validator(db=db,subject_id=subject_id, subject_name=subject_name)
     question = question_validator(question)

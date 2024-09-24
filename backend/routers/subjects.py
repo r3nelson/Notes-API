@@ -38,15 +38,21 @@ def get_subject_id(subject_name: str, db: Session = Depends(get_db)):
 
 @router.post("/subjects/", response_model=SubjectResponse)
 def create_subject(
-                subject_name: str,
+                subject: SubjectCreate,
+                subject_name: str = None,
                 continuations: Optional[List[str]] = [],
                 db:Session = Depends(get_db)):
+    
+    print(subject)
+    if not subject_name and subject.name: subject_name = subject.name
+    if not continuations and subject.continuations: continuations = subject.continuations
 
     if not subject_name:  raise HTTPException(status_code=400, detail="subject_name is required and cannot be empty")
 
     existing_subject = db.query(Subject).filter(Subject.name == subject_name).first()
     if existing_subject:
         raise HTTPException(status_code=400, detail=f"Subject '{subject_name}' already exists.")
+    
 
     new_subject = Subject(
         name=subject_name.lower(),
