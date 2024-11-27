@@ -3,8 +3,7 @@ export interface FlashCard {
   question: string;
   answer: string;
   confidence: number;
-  subject_id?: number;
-  subject_name?: string;
+  subject_name: string;
 }
 
 export interface Subject {
