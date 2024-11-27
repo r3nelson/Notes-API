@@ -7,7 +7,6 @@ const FlashcardForm: React.FC = () => {
   const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [confidence, setConfidence] = useState<number>(1.0);
-  const [subject_id, setSubjectId] = useState<number>(0);
   const [subject_name, setSubjectName] = useState<string>("");
   const [error, setError] = useState<string | null>("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -15,9 +14,9 @@ const FlashcardForm: React.FC = () => {
   const handleFlashcardSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Validate that at least one of subjectId or subjectName is provided
-    if (!subject_id && !subject_name) {
-      setError("Please provide either a Subject ID or Subject Name.");
+    // Validate that subject_name is provided
+    if (!subject_name) {
+      setError("Please provide Subject Name");
       return;
     }
 
@@ -25,18 +24,15 @@ const FlashcardForm: React.FC = () => {
       question,
       answer,
       confidence,
-      subject_id,
       subject_name,
     };
 
     try {
-      console.log(`flashcard: ${flashcard}`);
       await createFlashcard(flashcard);
       // Clear the form after successful submission
       setQuestion("");
       setAnswer("");
       setConfidence(0);
-      setSubjectId(0);
       setSubjectName("");
       setSuccessMessage("Flashcard created successfully!");
       setError(null);
@@ -86,16 +82,6 @@ const FlashcardForm: React.FC = () => {
             max="10.0"
             step="0.5"
             required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="subject_id">Subject ID:</label>
-          <input
-            type="number"
-            id="subject_id"
-            value={subject_id}
-            onChange={(e) => setSubjectId(parseInt(e.target.value))}
           />
         </div>
 

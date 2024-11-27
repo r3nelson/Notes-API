@@ -20,7 +20,7 @@ const FlashcardItem: React.FC<{ flashcard: FlashCard }> = ({ flashcard }) => {
         <strong>Confidence:</strong> {flashcard.confidence}
       </p>
       <p>
-        <strong>Subject ID:</strong> {flashcard.subject_id}
+        <strong>Subject:</strong> {flashcard.subject_name}
       </p>
     </div>
   );
