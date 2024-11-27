@@ -29,10 +29,10 @@ def get_subject(id: int, db: Session = Depends(get_db)):
 # GET a subject id by subject name
 @router.get("/subject/id/{subject_name}")
 def get_subject_id(subject_name: str, db: Session = Depends(get_db)):
-    subject = db.query(Subject).filter(Subject.name == subject_name).first()
+    subject = db.query(Subject).filter(Subject.name == subject_name.lower()).first()
 
     if not subject:
-        raise HTTPException(status_code=404, detail=f"Subject '{subject_name}' not found")
+        raise HTTPException(status_code=404, detail=f"Subject '{subject_name.lower()}' not found")
     return {"subject.id" : subject.id}
 
 

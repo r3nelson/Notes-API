@@ -11,7 +11,13 @@ load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 # Create an SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    # might be needed for connecting to cloud db
+    # connect_args={
+    #     "sslmode": "require"
+    # }
+    )
 
 # Create a sessionmaker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
