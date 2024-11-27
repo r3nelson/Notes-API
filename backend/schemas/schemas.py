@@ -5,7 +5,7 @@ class FlashCardCreate(BaseModel):
     question: str
     confidence: float
     answer: str
-    subject_id: int # Foreign key reference to Subject
+    # subject_id: int # Foreign key reference to Subject
     subject_name: str
 
 class FlashCardResponse(BaseModel):
