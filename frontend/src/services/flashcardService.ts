@@ -29,11 +29,25 @@ export const fetchFlashcards = async (): Promise<FlashCard[]> => {
 //   return data;
 // };
 
+// Fetch Flashcards by subject
+export const fetchFlashcardsBySubject = async (
+  subject_name: string
+): Promise<FlashCard[]> => {
+  const response = await fetch(`${API_URL}/flashcards/${subject_name}`);
+
+  if (!response.ok) {
+    throw new Error(`Error fetching flashcards: ${response.statusText}`);
+  }
+
+  const data: FlashCard[] = await response.json();
+  return data;
+};
+
 // Create a Flashcard
 export const createFlashcard = async (
   flashcard: Omit<FlashCard, "id">
 ): Promise<void> => {
-  const response = await fetch(`${API_URL}/flashcards`, {
+  const response = await fetch(`${API_URL}/flashcard`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,7 +56,7 @@ export const createFlashcard = async (
   });
 
   if (!response.ok) {
-    const errorDetails = await response.json(); // Try to parse the error details
+    const errorDetails = await response.json();
     throw new Error(
       `Error fetching subjects: ${response.statusText}. Details: ${errorDetails.detail}`
     );
