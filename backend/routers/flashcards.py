@@ -67,11 +67,6 @@ def create_flashcard(
                     subject_name: str = None,
                     db: Session = Depends(get_db)):
     
-    print(flashcard)
-    print(f'{question = }')
-    print(f'{answer = }')
-    print(f'{confidence = }')
-    print(f'{subject_name = }')
     if not question and flashcard.question: question = flashcard.question
     if not answer and flashcard.answer: answer = flashcard.answer
     if not confidence and flashcard.confidence: confidence = flashcard.confidence
